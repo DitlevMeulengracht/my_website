@@ -1,6 +1,6 @@
 baseURL: http://example.org/
 languageCode: en-us
-title: Forty
+title: Portfolio Website for Ditlev
 theme: forty
 googleAnalytics: ''
 disqusShortname: ''
@@ -10,18 +10,18 @@ params:
     subtitle: |-
       A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP
       AND RELEASED UNDER THE CREATIVE COMMONS.
-    title: Hi, my name is Forty
+    title: Hi, my name is Ditlev Peter Meulengracht and this is my new website!
   blog: {}
   contact:
     address:
-      - city: City, ST 00000
-        country: Country
-        street: Street
+      - city: London, ST 00000
+        country: United Kingdom
+        street: Street A
         title: Address
     buttonClear: Clear
     buttonSend: Send message
     email:
-      - email: example@domain.com
+      - email: testemail@domain.com
         title: Email
     enable: yes
     phone:
@@ -56,7 +56,7 @@ params:
         url: https://www.github.com
       - icon: fa-linkedin
         label: LinkedIn
-        url: https://www.linkedin.com
+        url: https://www.linkedin.com/school/london-business-school/
   image: ''
   name: Your name
   navigation:
