@@ -24,7 +24,7 @@ params:
         title: Email
     enable: yes
     phone:
-      - phone: (+44) 111-2222 
+      - phone: (+44) 07463 477791
         title: Phone
   custom_css: []
   custom_js: []
@@ -60,11 +60,11 @@ params:
   name: Ditlev Peter Meulengracht
   navigation:
     button1:
-      - name: Get Started
-        url: blogs
+#      - name: Get Started
+#        url: blogs
     button2:
-      - name: Log In
-        url: '#'
+#      - name: Log In
+#        url: '#'
     links:
       - name: Home
         url: '#'
@@ -72,8 +72,8 @@ params:
         url: blogs
       - name: Generic Blog
         url: blogs/ipsum
-      - name: Elements
-        url: elements.html
+#      - name: Elements
+#        url: elements.html
     menu: Navigation
     subtitle: MFA2022 Data Analytics Website
     title: Ditlev's 
@@ -88,10 +88,10 @@ params:
         subtitle: My Academic and Professional Experience
         title: Resume
         url: blogs/resume
-      - image: pic03.jpg
-        subtitle: Check out some stats!
-        title: Analytics
-        url: blogs/risk_return
+      - image: Power.jpeg
+        subtitle: An interactive map
+        title: Power generating capacity
+        url: blogs/power
       - image: pic04.jpg
         subtitle: Nisl Sed Aliquam
         title: Ipsum

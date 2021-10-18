@@ -5,7 +5,7 @@ categories:
 date: "2021-09-30"
 description: Get access to my resume # the title that will show up once someone gets to this page
 draft: false
-image:  
+image:  Resume1.jpeg
 
 keywords: ""
 slug: resume # slug is the shorthand URL address... no spaces plz

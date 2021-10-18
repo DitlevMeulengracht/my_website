@@ -1,0 +1,180 @@
+---
+categories:  
+- ""    #the front matter should be like the one found in, e.g., blog2.md. It cannot be like the normal Rmd we used
+- ""
+date: "2021-09-30"
+description: An interactive map of the location, size, and technology of all the world's power generating plants # the title that will show up once someone gets to this page
+draft: false
+image: Power.jpeg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
+
+keywords: ""
+slug: power # slug is the shorthand URL address... no spaces plz
+title: Locations of power generating capacity
+---
+  
+
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+
+```{r load-libraries, include=FALSE}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(lubridate)
+library(here)
+library(skimr)
+library(janitor)
+library(httr)
+library(readxl)
+library(vroom)
+library(infer)
+library(tidyquant)
+library(rvest)
+library(ggtext)
+library(GGally) # for correlation-scatter plot matrix
+library(ggfortify) # to produce residual diagnostic plots
+library(rsample) # to split dataframe in training- & testing sets
+library(broom) # use broom:augment() to get tidy table with regression output, residuals, etc
+library(huxtable) # to get summary table of all models produced
+library(kableExtra) # for formatting tables
+library(moderndive) # for getting regression tables
+library(skimr) # for skim
+library(mosaic)
+library(leaflet) # for interactive HTML maps
+library(tidytext)
+library(viridis)
+library(vroom)
+library(car)
+```
+
+# Interactive map of power generating capacity
+
+We have borrowed the database from [World Resource Institute](https://datasets.wri.org/dataset/globalpowerplantdatabase) to find the location of all the world's powerplants!
+
+```{r load_data, include=FALSE}
+power_capacity <- read_csv(here::here("data", "global_power_plant_database.csv"))
+```
+
+## All power plants
+
+Below codechunk is used to map all the world's power plants!
+
+Hover to see the capacity in **MW** and click to see the **Fuel Type**
+
+
+```{r}
+			
+#Map of the power plants around the world
+power_capacity %>% 
+  
+  #Using Leaflet
+  leaflet() %>% 
+  
+  #Maps from openstreet.map
+  addProviderTiles("OpenStreetMap.Mapnik") %>% 
+  
+  #Using circles showing name and fuel
+  addAwesomeMarkers(lng = ~longitude, 
+                   lat = ~latitude, 
+                   popup = ~primary_fuel,
+                   label = ~capacity_mw,
+                   clusterOptions = markerClusterOptions()
+                   )
+```
+
+## Top 10 biggest plants
+
+However, there is a lof of information in the above. Did you know the 10 largest power stations in the world?
+
+Let's find them! 
+
+```{r}
+#Below chunk sorts and cuts out the 10 largest power plants.
+power_capacity_top10 <- power_capacity %>% 
+  arrange(desc(capacity_mw)) %>% 
+  slice(1:10)
+```
+
+
+Feel free to explore the map below!
+
+```{r}
+			
+#Map of the power plants around the world
+power_capacity_top10 %>% 
+  
+  #Using Leaflet
+  leaflet() %>% 
+  
+  #Maps from openstreet.map
+  addProviderTiles("OpenStreetMap.Mapnik") %>% 
+  
+  #Using circles showing name and fuel
+  addAwesomeMarkers(lng = ~longitude, 
+                   lat = ~latitude, 
+                   popup = ~primary_fuel,
+                   label = ~capacity_mw,
+                   clusterOptions = markerClusterOptions()
+                   )
+```
+
+
+The biggest is the Three Gorges Dam in China with 22,500 GW!
+
+
+For reference, here is the top power generating technologies as of 2017:
+
+```{r}
+
+#Reordering and summarizing total capacity by Fuel Type
+power_capacity_total <-  power_capacity %>% 
+  
+  #Grouping by Fuel
+  group_by(primary_fuel) %>% 
+  
+  #Summarizing by capacity
+  summarize(total_GW = sum(capacity_mw)/1000) %>% 
+  
+  #Arranging by total GW
+  arrange(desc(total_GW))
+
+
+#Plotting 
+ggplot(power_capacity_total, aes(x = reorder(primary_fuel, total_GW), y = total_GW, fill = primary_fuel)) + 
+  
+  #In columns
+  geom_col() + 
+  
+  #Choosing Theme
+  theme_economist() + 
+  
+  #Flipping Axis
+  coord_flip() + 
+  
+  #Removing legend
+  guides(fill =F) + 
+  
+  #Adding labels
+  labs(title = "World power generating capacity by Technology",
+       subtitle = "Gas, Coal, And Hydro make up the majority of power generating capacity", 
+       y = "World generating capacity in GW",
+       x = "Fuel") +
+  
+  NULL
+
+```
+
