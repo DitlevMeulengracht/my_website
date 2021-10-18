@@ -1,0 +1,94 @@
+---
+categories:  
+- ""    #the front matter should be like the one found in, e.g., blog2.md. It cannot be like the normal Rmd we used
+- ""
+date: "2021-09-30"
+description: Life at LBS summarized in pictures # the title that will show up once someone gets to this page
+draft: false
+image: 
+
+keywords: ""
+slug: lbspictures # slug is the shorthand URL address... no spaces plz
+title: LBS experiences
+---
+
+
+# Introduction
+
+This section is used to highlight a few of my experiences at LBS in pictures! 
+
+
+## Friend Group
+
+Usually this is the people i hang out with at LBS! 
+I'm the guy **2nd from the right!**
+  
+```{r Friends, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/Friend_Group.jpeg",error =FALSE)
+```
+
+## Activities
+
+We have been up for a bunch of activities since we got here! 
+
+We have been going to carnevals!
+  
+```{r Carnival, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/Carnival.jpeg",error =FALSE)
+```
+
+And Jazz Clubs!
+  
+```{r Jazz, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/Jazz_club.jpeg",error =FALSE)
+```
+
+We even helped the community by planting flowers in a local garden!
+  
+```{r Plants, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/Plant.jpeg",error =FALSE)
+```
+
+And have gone for long runs in Regent's Park!
+  
+```{r Run, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/Run.jpeg",error =FALSE)
+```
+
+## School
+
+We've also had to do quite a bit of studying...
+
+Our current courses are:
+
+- **Data Analytics**
+- **Investment Fundamentals**
+- **Financial Statement Analysis**
+
+This website was created as part of the **Data Analytics** assignments!
+
+
+We've have plent of time in school!
+
+```{r School, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/School.jpeg",error =FALSE)
+```
+
+Tried to figure out complicated RStudio Graphs in GGplot!
+
+```{r Graphs, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/Graphs.jpeg",error =FALSE)
+```
+
+And planned how to work on projects!
+
+```{r Planning, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/Planning.jpeg",error =FALSE)
+```
+
+Luckily we have a good study group!
+
+```{r Study, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/Study_Grp.jpeg",error =FALSE)
+```
+
