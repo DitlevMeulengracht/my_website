@@ -71,7 +71,7 @@ params:
       - name: My Blogs
         url: blogs
       - name: About Me
-        url: blogs/about
+        url: about/about
 #      - name: Elements
 #        url: elements.html
     menu: Navigation
@@ -84,10 +84,10 @@ params:
         subtitle: in pictures
         title: An overview of my experiences at LBS
         url: blogs/lbspictures
-      - image: Resume1.jpeg
-        subtitle: In PDF
-        title: Access my resume
-        url: blogs/resume
+      - image: climbing.jpeg
+        subtitle: A list based on personal experiences
+        title: My favourite Bouldering Gyms in London
+        url: blogs/bouldering
       - image: Power.jpeg
         subtitle: An interactive map
         title: See the location of the World's power generating capacity
@@ -96,17 +96,17 @@ params:
         subtitle: A data visualization
         title: GDP comparison of Nordic Countries
         url: blogs/gdp
-      - image: climbing.jpeg
-        subtitle: A list based on personal experiences
-        title: My favourite Bouldering Gyms in London
-        url: blogs/bouldering
-      - image: pic06.jpg
-        subtitle: Feugiat Amet Tempus
-        title: Etiam
-        url: blogs/Magna
+      - image: neth.jpeg
+        subtitle: A regression analysis
+        title: Determinents of AirBnB prices in Amsterdam
+        url: blogs/regression
+      - image: Res.jpeg
+        subtitle: In PDF
+        title: Access my resume
+        url: blogs/resume
   two:
     buttonText: About me!  
     enable: yes
     subtitle: "A little more information about me!"
     title: Additional Information
-    url: blogs/about
+    url: about/about

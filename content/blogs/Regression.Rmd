@@ -1,0 +1,775 @@
+---
+categories:  
+- ""    #the front matter should be like the one found in, e.g., blog2.md. It cannot be like the normal Rmd we used
+- ""
+date: "2021-09-30"
+description: A regression analysis # the title that will show up once someone gets to this page
+draft: false
+image: neth.jpeg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
+
+keywords: ""
+slug: regression # slug is the shorthand URL address... no spaces plz
+title: What are the determinants of AirBNB prices in Amsterdam?
+---
+  
+
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.align = "center"
+)
+```
+
+
+```{r load-libraries, include=FALSE}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(lubridate)
+library(here)
+library(skimr)
+library(janitor)
+library(httr)
+library(readxl)
+library(vroom)
+library(infer)
+library(tidyquant)
+library(rvest)
+library(ggtext)
+library(GGally) # for correlation-scatter plot matrix
+library(ggfortify) # to produce residual diagnostic plots
+library(rsample) # to split dataframe in training- & testing sets
+library(broom) # use broom:augment() to get tidy table with regression output, residuals, etc
+library(huxtable) # to get summary table of all models produced
+library(kableExtra) # for formatting tables
+library(moderndive) # for getting regression tables
+library(skimr) # for skim
+library(mosaic)
+library(leaflet) # for interactive HTML maps
+library(tidytext)
+library(viridis)
+library(vroom)
+library(car)
+```
+
+## Introduction 
+
+AirBNB has provided a details on all listings in amsterdam. We have wrangled this data and analyzed some of the key determinants of the price of a Airbnb for a minimum of two people for 4 days. 
+
+The data wrangling and other analysis has been excluded, instead, a summary of key considerations is shown below. 
+
+```{r load_data, include=FALSE}
+listings_4 <- read_csv(here::here("data", "listings.csv"))
+```
+
+
+```{r, include=FALSE}
+##Fist, we have to filter the data to represent 2 people staying for 4 nights.
+listings_4 <- listings_4 %>% 
+  filter(accommodates>=2) %>% 
+  mutate(price_4_nights =price*4)
+
+```
+
+### Price in Log or absolute terms
+
+First let's consider if we should analyze log price or simply price. 
+
+```{r}
+# Plot density of price using price_4_nights
+
+#Using price 4 nights without log
+ggplot(listings_4,aes(x=price_4_nights))+
+  
+  #In a density plot
+  geom_density() +   
+  
+  #Useful labels
+  labs(      
+      title = "Density plot for prices for 4 nights",
+      x = "price per night",
+      y = "Density") + 
+  
+  #Simple Theme
+      theme_classic() + 
+  
+    NULL
+
+
+
+
+# Plot density of price using log(price_4_nights)
+ggplot(listings_4,aes(x=log(price_4_nights)))+
+  
+  #In density Plot
+  geom_density() +   
+  
+  #usfeul Labs
+  labs(      
+      title = "Density plot for prices for 4 nights",
+      x = "price per night (log)",
+      y = "Density") + 
+  
+  #Sumple Theme
+      theme_classic() + 
+  
+    NULL
+```
+
+We see that taking the log of prices brings us much closer to a normal distribution why we use log prices going forward. 
+
+This is the same conclusion we made above here we just plotted the distribution for 4 nights and after adjusting our dataset throughout the above code. 
+
+
+
+```{r, include=FALSE}
+
+#Set seed for regeneration purposes
+set.seed(123456)
+
+
+#Splitting 75% into a training set
+train_test_split <- initial_split(listings_4, prop = 0.75)
+
+#New variable name for training set
+listings_train <- training(train_test_split)
+
+#New Variable name for test set 
+listings_test <- testing(train_test_split)
+```
+
+
+
+```{r, include=FALSE}
+
+#Create the model1
+model1 <- lm(log(price_4_nights) ~ #Predicted Variable
+               
+               #Explanatory Variables
+               prop_type_simplified +
+               number_of_reviews +
+               review_scores_rating,
+             
+             #Dataset
+             data=listings_train)
+
+#Summary of Model 1
+summary(model1)
+
+```
+
+
+```{r, include=FALSE}
+
+#Create the model2
+model2 <- lm(log(price_4_nights) ~ #Predicted Variable
+               
+               #Explanatory Variables
+               prop_type_simplified +
+               number_of_reviews +
+               review_scores_rating + 
+               room_type,
+             
+             #Dataset
+             data=listings_train)
+
+#Summary of Model 2
+summary(model2)
+
+```
+
+
+```{r, include=FALSE}
+car::vif(model2)
+```
+
+
+```{r, include=FALSE}
+
+#New model
+model3_1 <- lm(
+  
+  #Predicted Variable
+  log(price_4_nights) ~ 
+                 
+    
+                #Explanatory Variables
+                 prop_type_simplified+
+                 number_of_reviews+
+                 review_scores_rating +
+                 room_type + 
+                 beds +  
+                 bedrooms + 
+                 accommodates, 
+               
+            #dataset
+               data = listings_train)
+
+summary(model3_1)
+
+```
+
+
+```{r, include=FALSE}
+
+#New model
+model3_2 <- lm(
+  
+  #Predicted Variable
+  log(price_4_nights) ~ 
+                 
+    
+                #Explanatory Variables
+                 prop_type_simplified+
+                 number_of_reviews+
+                 review_scores_rating +
+                 room_type + 
+                 bedrooms + 
+                 accommodates, 
+               
+            #dataset
+               data = listings_train)
+
+summary(model3_2)
+
+```
+
+```{r, include=FALSE}
+vif(model3_2)
+```
+
+```{r, include=FALSE}
+#Same model but without Property Type
+model3_3 <- lm(
+  
+  log(price_4_nights) ~ 
+    
+    #Explanatory Variables
+    number_of_reviews+
+    review_scores_rating + 
+    room_type+
+    bedrooms + 
+    accommodates, 
+  
+  data = listings_train)
+
+#Same model but without Room Type
+model3_4 <- lm(
+  
+  log(price_4_nights) ~ 
+    
+    #Explanatory Variables
+    prop_type_simplified+
+    number_of_reviews+
+    review_scores_rating + 
+    bedrooms + 
+    accommodates, 
+  
+  data = listings_train)
+
+vif(model3_3)
+vif(model3_4)
+
+
+```
+
+```{r, include=FALSE}
+summary(model3_3)
+summary(model3_4)
+```
+
+
+```{r, include=FALSE}
+#Same model but without Property Type
+model3_3_product <- lm(
+  
+  log(price_4_nights) ~ 
+    
+    #Explanatory Variables
+    number_of_reviews+
+    review_scores_rating + 
+    room_type+
+    bedrooms + 
+    accommodates + 
+    room_type*number_of_reviews, 
+  
+  data = listings_train)
+
+#Same model but without Room Type
+summary(model3_3_product)
+```
+
+
+
+```{r, include=FALSE}
+#Model 3.2 incl. superhost 
+model4 <- lm(
+  
+  log(price_4_nights) ~ 
+    
+    #Explanatory Variables
+    number_of_reviews+
+    review_scores_rating + 
+    room_type+
+    bedrooms + 
+    accommodates+ 
+    host_is_superhost, 
+  
+  data = listings_train)
+
+summary(model4)
+
+```
+
+
+
+```{r, include=FALSE}
+vif(model4)
+```
+
+
+```{r, include=FALSE}
+#Model 4.0 incl. immidiate bookings 
+model5 <- lm(
+  
+  log(price_4_nights) ~ 
+    
+    #Explanatory Variables
+    number_of_reviews+
+    review_scores_rating + 
+    room_type+
+    bedrooms + 
+    accommodates+ 
+    host_is_superhost+ 
+    instant_bookable, 
+  
+  data = listings_train)
+
+summary(model5)
+
+```
+
+```{r, include=FALSE}
+vif(model5)
+```
+
+
+
+```{r, include=FALSE}
+#Model 5 + neighbourhoods
+model6 <- lm(
+  
+  #Variable to predict
+  log(price_4_nights) ~ 
+    
+    #Explanatory Variables
+    number_of_reviews +
+    review_scores_rating + 
+    room_type +
+    bedrooms + 
+    accommodates + 
+    host_is_superhost + 
+    instant_bookable + 
+    neighbourhood_cleansed, 
+  
+  #Dataset
+  data = listings_train)
+
+summary(model6)
+```
+
+
+
+```{r, include=FALSE}
+vif(model6)
+```
+
+
+```{r, include=FALSE}
+#Model 6 + 30 day availability
+model7 <- lm(
+  
+  #Variable to predict
+  log(price_4_nights) ~ 
+    
+    #Explanatory Variables
+    number_of_reviews +
+    review_scores_rating + 
+    room_type +
+    bedrooms + 
+    accommodates + 
+    host_is_superhost + 
+    instant_bookable + 
+    neighbourhood_cleansed+ 
+    availability_30, 
+  
+  #Dataset
+  data = listings_train)
+
+summary(model7)
+```
+
+
+```{r, include=FALSE}
+vif(model7)
+```
+
+
+```{r, include=FALSE}
+#Model 7 + License
+model8 <- lm(
+  
+  #Variable to predict
+  log(price_4_nights) ~ 
+    
+    #Explanatory Variables
+    number_of_reviews +
+    review_scores_rating + 
+    room_type +
+    bedrooms + 
+    accommodates + 
+    host_is_superhost + 
+    instant_bookable + 
+    neighbourhood_cleansed+ 
+    availability_30 + 
+    license, 
+  
+  #Dataset
+  data = listings_train)
+
+summary(model8)
+```
+
+```{r, include=FALSE}
+#Model 7 + Last Review
+model9 <- lm(
+  
+  #Variable to predict
+  log(price_4_nights) ~ 
+    
+    #Explanatory Variables
+    number_of_reviews +
+    review_scores_rating + 
+    room_type +
+    bedrooms + 
+    accommodates + 
+    host_is_superhost + 
+    instant_bookable + 
+    neighbourhood_cleansed+ 
+    availability_30 + 
+    last_review, 
+  
+  #Dataset
+  data = listings_train)
+
+summary(model9)
+```
+
+
+```{r, include=FALSE}
+vif(model9)
+```
+
+
+
+```{r, include=FALSE}
+autoplot(model9)
+```
+
+
+```{r, include=FALSE}
+
+#To get the RMSE from the training set
+rmse_train <- listings_train %>% 
+  
+  #Calculating RMSE
+  mutate(predictions = predict(model9, .)) %>% 
+  select(predictions,price_4_nights) %>% 
+  mutate(squared_error = (predictions - log(price_4_nights))^2) %>% 
+  summarise(rmse = sqrt(mean(squared_error))) %>% 
+  
+  #Printing RMSE
+  pull()
+rmse_train
+
+
+#Repeated for test set
+rmse_test <- listings_test %>% 
+  
+  #Calculating RMSE
+  mutate(predictions = predict(model9, .)) %>% 
+  select(predictions,price_4_nights) %>% 
+  mutate(squared_error = (predictions - log(price_4_nights))^2) %>% 
+  summarise(rmse = sqrt(mean(squared_error))) %>% 
+  
+  #Printing RMSE
+  pull()
+rmse_test
+
+
+```
+
+
+```{r, include=FALSE}
+#Model final adjusted without instant_bookable and without last review:
+model_final <- lm(
+  
+  #Variable to predict
+  log(price_4_nights) ~ 
+    
+    #Explanatory Variables
+    number_of_reviews +
+    review_scores_rating + 
+    room_type +
+    bedrooms + 
+    accommodates + 
+    host_is_superhost + 
+    neighbourhood_cleansed+ 
+    availability_30, 
+
+  #Dataset
+  data = listings_train)
+
+summary(model_final)
+```
+### Summary table of all models
+
+
+See the overview of the models we have looked at with the final model on the right
+
+```{r echo=FALSE}
+huxreg(list(
+  "Prop Type, Reviews, Rating" = model1, 
+  "+ Room Type" = model2, 
+  "+ Beds + Bedrooms + Accom." = model3_1, 
+  "- Beds" = model3_2, 
+  "- Prop Type" = model3_3, 
+  " - Room Type + Prop Type"  = model3_4, 
+  " + No Reviews*Room_type"  = model3_3_product, 
+  "+ Superhost" = model4, 
+  "+ immidiate bookings" = model5, 
+  "+ Neighbourhoods" = model6, 
+  "+ Availability" = model7, 
+  "+ license" = model8, 
+  "+ last review" = model9,
+  "FINAL (- instant bookable - last_review)" = model_final))
+```
+
+
+### Summary of final model
+
+A summary of this model can be seen below
+
+```{r}
+summary(model_final)
+```
+
+The model has an adjusted r square and explanatory power of 48.69% through 8 variables (some of them being catagorical) and a residual SE of 0.351.
+
+
+### Diagnostics
+
+Let's check for issues with residuals and normal distribution:
+
+```{r}
+autoplot(model_final)
+```
+
+We see there are no issues with residuals or with normal distribution.
+
+Let's check VIF as well:
+
+```{r}
+vif(model_final)
+```
+Also, we still see no issues.
+
+Let's check RMSE 
+
+```{r}
+
+#To get the RMSE from the training set
+rmse_train <- listings_train %>% 
+  
+  #Calculating RMSE
+  mutate(predictions = predict(model_final, .)) %>% 
+  select(predictions,price_4_nights) %>% 
+  mutate(squared_error = (predictions - log(price_4_nights))^2) %>% 
+  summarise(rmse = sqrt(mean(squared_error))) %>% 
+  
+  #Printing RMSE
+  pull()
+rmse_train
+
+
+#Repeated for test set
+rmse_test <- listings_test %>% 
+  
+  #Calculating RMSE
+  mutate(predictions = predict(model_final, .)) %>% 
+  select(predictions,price_4_nights) %>% 
+  mutate(squared_error = (predictions - log(price_4_nights))^2) %>% 
+  summarise(rmse = sqrt(mean(squared_error))) %>% 
+  
+  #Printing RMSE
+  pull()
+rmse_test
+
+
+```
+
+No overfitting issues
+
+
+## Summary
+
+We see now we have significant variables and the final model has less variables but still decent explanatory power (48.8%) and similar RMSE in the test and training set. 
+
+Interestingly, our model only predicts roughly 50% of price variations. The remaining 50% is explained by variables not included here. 
+
+50% does seem high given the final model is only using 8 different variables with some of the being categorical.
+
+In sum our model: 
+
+- Has explanatory power of 48.8%
+- Has not overfitting issues and RMSE is similar in the testing and training set both around 0.35
+- Has no correlation issues with all VIF factors scoring below 2.5
+- Has no difference in the residuals as the fitted values increase
+- Is approximately following the normal distribution. 
+
+
+
+## Model test on Airbnb's
+
+We will now try to use our model to predict prices for staying for 4 nights, in a private room, with at least 10 reviews, and reviews above 4.98 (We use 4.98 to lower sample size)
+
+First let us define our target segment
+
+
+```{r}
+
+
+#Utilizing the full dataset
+targets <- listings_4 %>%
+  
+  #BY Private Room
+  filter(room_type == "Private room", 
+         
+         #At least 10 reviews
+         number_of_reviews >= 10, 
+         
+         #A score above 4.9
+         review_scores_rating >= 4.98) %>%
+  
+  #Predicted values in log
+  mutate(log_predicted_values = predict(model_final, .),
+         
+         #Predicted Values Nominal
+         prediction = exp(log_predicted_values)) 
+
+
+
+
+
+```
+
+We now have our predictions in place. Lets get the lower and upper CI. To do that we need the Sigma (Residual Standard Eroro)
+
+```{r}
+
+#Let us take a look at our model
+
+modelsigma <- model_final %>% 
+  
+  #Glance at key summary
+  glance() %>% 
+  
+  #Select Sigma
+  select(sigma)
+
+modelsigma
+
+```
+
+Our Residual STandard error is 0.35. We need to add 2x the residual standard error to get the prediction. Let's add this to our predicted values.
+
+
+```{r}
+
+
+#Utilizing the full dataset
+targets_prediction <- targets %>%
+  
+  #Adding the Sigma to a column
+  mutate(sigma = 0.3512151, 
+         
+         #Getting the Lower CI in log values
+         lower_ci = log_predicted_values - sigma*2,
+         
+         #Getting the upper CI in log values
+         upper_ci = log_predicted_values + sigma*2, 
+         
+         #Converting Lower  CI to actual values
+         LowerCI = exp(lower_ci), 
+         
+         #Converting Upper CI to actual values
+         UpperCI = exp(upper_ci)) %>% 
+  
+  #Selecting key variables
+  select(price_4_nights, prediction, LowerCI, UpperCI)
+
+
+
+```
+
+We will plot our 95% confidence interval to get an easier overview:
+
+```{r}
+
+targets_prediction_plot <- targets_prediction %>% 
+  
+  pivot_longer(cols = 2:4, 
+               names_to = "Interval", 
+                values_to = "price")
+
+
+#Plotting the intervals density
+ggplot(targets_prediction_plot, aes(x = price, fill = Interval)) + 
+  
+  #Predicted prices
+       geom_density(alpha = 0.2) + 
+  
+  #Simple Theme
+  theme_bw() + 
+  
+  labs(title = "Predicted prices versus confidence intervals",
+       x = "Predicted Price", 
+       y = "Density") +
+  
+  
+  NULL
+
+
+```
+
+We see there is a great difference between our predicted price and lower and upper confidence intervals. 
+
+This shows us that the model although it explains 48% still has quite high variety in the prices. 
+
+I.e. some predicted prices go as high as 1,500 and as close to 0 within the 95% confidence interval.
+
+
+
+
+
+
+
+
+
