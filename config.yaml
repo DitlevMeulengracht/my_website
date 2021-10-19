@@ -19,7 +19,7 @@ params:
         title: Address
     buttonClear: Clear
     buttonSend: Send message
-    email:
+    email: 
       - email: ditlevm.mfa2022@london.edu
         title: Email
     enable: yes
