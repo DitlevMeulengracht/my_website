@@ -9,7 +9,7 @@ image: Power.jpeg # save picture in \static\img\blogs. Acceptable formats= jpg, 
 
 keywords: ""
 slug: power # slug is the shorthand URL address... no spaces plz
-title: Locations of power generating capacity
+title: Locations of the world's power generating capacity
 ---
   
 
@@ -23,8 +23,6 @@ options(digits = 3)
 
 # default figure size
 knitr::opts_chunk$set(
-  fig.width=6.75, 
-  fig.height=6.75,
   fig.align = "center"
 )
 ```
@@ -61,7 +59,7 @@ library(vroom)
 library(car)
 ```
 
-# Interactive map of power generating capacity
+## Interactive map of power generating capacity
 
 We have borrowed the database from [World Resource Institute](https://datasets.wri.org/dataset/globalpowerplantdatabase) to find the location of all the world's powerplants!
 
@@ -69,14 +67,14 @@ We have borrowed the database from [World Resource Institute](https://datasets.w
 power_capacity <- read_csv(here::here("data", "global_power_plant_database.csv"))
 ```
 
-## All power plants
+### All power plants
 
 Below codechunk is used to map all the world's power plants!
 
 Hover to see the capacity in **MW** and click to see the **Fuel Type**
 
 
-```{r}
+```{r fig.width=12, fig.height=10}
 			
 #Map of the power plants around the world
 power_capacity %>% 
@@ -96,13 +94,13 @@ power_capacity %>%
                    )
 ```
 
-## Top 10 biggest plants
+### Top 10 biggest plants
 
 However, there is a lof of information in the above. Did you know the 10 largest power stations in the world?
 
 Let's find them! 
 
-```{r}
+```{r fig.width=15, fig.height=10}
 #Below chunk sorts and cuts out the 10 largest power plants.
 power_capacity_top10 <- power_capacity %>% 
   arrange(desc(capacity_mw)) %>% 
@@ -112,7 +110,7 @@ power_capacity_top10 <- power_capacity %>%
 
 Feel free to explore the map below!
 
-```{r}
+```{r fig.width=12, fig.height=10}
 			
 #Map of the power plants around the world
 power_capacity_top10 %>% 
@@ -138,7 +136,7 @@ The biggest is the Three Gorges Dam in China with 22,500 GW!
 
 For reference, here is the top power generating technologies as of 2017:
 
-```{r}
+```{r fig.width=15, fig.height=10}
 
 #Reordering and summarizing total capacity by Fuel Type
 power_capacity_total <-  power_capacity %>% 

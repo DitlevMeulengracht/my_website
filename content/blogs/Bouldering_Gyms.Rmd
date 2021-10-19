@@ -1,0 +1,97 @@
+---
+categories:  
+- ""    #the front matter should be like the one found in, e.g., blog2.md. It cannot be like the normal Rmd we used
+- ""
+date: "2021-09-30"
+description: Top london climbing gyms based on my personal experiences # the title that will show up once someone gets to this page
+draft: false
+image: climbing.jpeg
+
+keywords: ""
+slug: bouldering # slug is the shorthand URL address... no spaces plz
+title: Top London Bouldering Gyms
+---
+
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+```
+
+
+## My personal preference for bouldering gyms in London
+
+Without further adue please see my below recommendation for bouldering gyms in London in ranked order:
+
+1. [Vauxhall East](https://www.vauxeast.co.uk)
+2. [Westway](https://www.everyoneactive.com/centre/westway-sports-fitness-centre/climbing/) 
+3. [Vauxhall West](https://www.vauxwest.co.uk)
+4. [West 1 Climbing Wall](https://www.everyoneactive.com/centre/seymour-leisure-centre/climbing-wall/)
+5. [Swiss Cottage Climbing Centre](https://www.better.org.uk/leisure-centre/london/camden/swiss-cottage-leisure-centre/f93e42c8-29dc-4dab-97df-e50b63219de3)
+
+
+## [Vauxhall East](https://www.vauxeast.co.uk)
+
+[Vauxhall East](https://www.vauxeast.co.uk) provides a nice atmosphere and great open gym with plenty of room for climbers.
+
+Furthermore, the gym has a nice setup utilizing the middle of the gym for competition boulders. 
+
+It's an interesting setup which ensures the space does not feel cramped and makes for great climbing! 
+  
+```{r, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/VE.jpeg",error =FALSE)
+```
+
+
+## [Westway](https://www.everyoneactive.com/centre/westway-sports-fitness-centre/climbing/) 
+
+[Westway](https://www.everyoneactive.com/centre/westway-sports-fitness-centre/climbing/)  is a great option because they include both lead and top-rope climbing.
+
+Although their bouldering section is smaller this makes it worth the effort for boulderers ready to try something different. 
+  
+```{r, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/WW.jpeg",error =FALSE)
+```
+
+
+
+## [Vauxhall West](https://www.vauxwest.co.uk)
+
+[Vauxhall West](https://www.vauxwest.co.uk) has a LOT of routes which is good for climbers who want to do intense training. 
+
+The downside of this gym is that it is split up in four sections making it feel quite cramped if there is a lot of people
+  
+```{r, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/VW.jpeg",error =FALSE)
+```
+
+
+
+
+## [West 1 Climbing Wall](https://www.everyoneactive.com/centre/seymour-leisure-centre/climbing-wall/)
+
+[West 1 Climbing Wall](https://www.everyoneactive.com/centre/seymour-leisure-centre/climbing-wall/) is quite private and does provide some freedom for solo sessions. 
+
+The downside here is the gym is quite small and rarely has new routes. 
+
+There is also toproping for those who wish to do that.
+  
+```{r, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/W1.jpeg",error =FALSE)
+```
+
+
+## [Swiss Cottage Climbing Centre](https://www.better.org.uk/leisure-centre/london/camden/swiss-cottage-leisure-centre/f93e42c8-29dc-4dab-97df-e50b63219de3)
+
+[Swiss Cottage Climbing Centre](https://www.better.org.uk/leisure-centre/london/camden/swiss-cottage-leisure-centre/f93e42c8-29dc-4dab-97df-e50b63219de3) iis the smallest of the gyms and currently closed. 
+
+The gym is cheaper for those who wish to save money.  
+
+  
+```{r, echo=FALSE, out.width = "800px"}
+knitr::include_graphics("/img/SW.jpeg",error =FALSE)
+```

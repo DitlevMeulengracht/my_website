@@ -12,6 +12,22 @@ slug: resume # slug is the shorthand URL address... no spaces plz
 title: My Resume
 ---
 
+
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.align = "center"
+)
+```
+
+
 ## Resume 
 
 Please feel free to download a copy of my resume in PDF by clicking [**Here!**](/pdf/CV.pdf) 

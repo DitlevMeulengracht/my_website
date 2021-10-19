@@ -34,7 +34,7 @@ params:
     text: Please visit [this page](/)
   favicon: favicon.ico
   footer:
-    copyright: Ditlev's Company
+    copyright: Ditlev
     enable: yes
     quicklinks:
       - alt: Data Analytics at London Business School
@@ -66,12 +66,12 @@ params:
 #      - name: Log In
 #        url: '#'
     links:
-      - name: Home
+      - name: Front Page
         url: '#'
-      - name: All sites
+      - name: My Blogs
         url: blogs
-      - name: Generic Blog
-        url: blogs/ipsum
+      - name: About Me
+        url: blogs/about
 #      - name: Elements
 #        url: elements.html
     menu: Navigation
@@ -82,31 +82,31 @@ params:
     showcase:
       - image: LBS.jpeg
         subtitle: in pictures
-        title: Experiences at LBS
+        title: An overview of my experiences at LBS
         url: blogs/lbspictures
       - image: Resume1.jpeg
-        subtitle: My Academic and Professional Experience
-        title: Resume
+        subtitle: In PDF
+        title: Access my resume
         url: blogs/resume
       - image: Power.jpeg
         subtitle: An interactive map
-        title: Power generating capacity
+        title: See the location of the World's power generating capacity
         url: blogs/power
-      - image: pic04.jpg
-        subtitle: Nisl Sed Aliquam
-        title: Ipsum
-        url: blogs/ipsum
-      - image: pic05.jpg
-        subtitle: Ipsum Dolor Sit Amet
-        title: Consequat
-        url: blogs/ipsum
+      - image: GDP.jpeg
+        subtitle: A data visualization
+        title: GDP comparison of Nordic Countries
+        url: blogs/gdp
+      - image: climbing.jpeg
+        subtitle: A list based on personal experiences
+        title: My favourite Bouldering Gyms in London
+        url: blogs/bouldering
       - image: pic06.jpg
         subtitle: Feugiat Amet Tempus
         title: Etiam
-        url: blogs/ipsum
+        url: blogs/Magna
   two:
-    buttonText: Check it out! 
+    buttonText: About me!  
     enable: yes
-    subtitle: "Find More information here!"
+    subtitle: "A little more information about me!"
     title: Additional Information
-    url: blogs
+    url: blogs/about

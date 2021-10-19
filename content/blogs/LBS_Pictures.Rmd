@@ -12,13 +12,23 @@ slug: lbspictures # slug is the shorthand URL address... no spaces plz
 title: LBS experiences
 ---
 
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
 
-# Introduction
+```
+
+
+## Introduction
 
 This section is used to highlight a few of my experiences at LBS in pictures! 
 
 
-## Friend Group
+### Friend Group
 
 Usually this is the people i hang out with at LBS! 
 I'm the guy **2nd from the right!**
@@ -27,7 +37,7 @@ I'm the guy **2nd from the right!**
 knitr::include_graphics("/img/Friend_Group.jpeg",error =FALSE)
 ```
 
-## Activities
+### Activities
 
 We have been up for a bunch of activities since we got here! 
 
@@ -55,7 +65,7 @@ And have gone for long runs in Regent's Park!
 knitr::include_graphics("/img/Run.jpeg",error =FALSE)
 ```
 
-## School
+### School
 
 We've also had to do quite a bit of studying...
 

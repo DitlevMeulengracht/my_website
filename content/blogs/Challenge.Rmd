@@ -1,0 +1,267 @@
+---
+categories:  
+- ""    #the front matter should be like the one found in, e.g., blog2.md. It cannot be like the normal Rmd we used
+- ""
+date: "2021-09-30"
+description: A breakdown of the GDP in Denmark, Sweden and Norway # the title that will show up once someone gets to this page
+draft: false
+image:  GDP.jpeg
+
+keywords: ""
+slug: gdp # slug is the shorthand URL address... no spaces plz
+title: GDP comparison of Nordic Countries
+---
+  
+  
+  
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.align = "center"
+)
+```
+
+
+```{r load-libraries, include=FALSE}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(GGally)
+library(readxl)
+library(here)
+library(skimr)
+library(janitor)
+library(broom)
+library(tidyquant)
+library(infer)
+library(openintro)
+```
+
+
+## GDP Compononents over time in Nordic Countries
+
+This site is used to look at GDP components over time in the nordic countries. 
+
+We will breakdown GDP into the main components of Consumption C, Investment I, Government spending G, and Net Exports. 
+
+First we want to load the dataset for GDP in R. The dataset goes back to 1970 for all countries and with each GDP component. 
+
+The dataset can be loaded with the following code:
+
+
+```{r read_GDP_data}
+
+UN_GDP_data  <-  read_excel(here::here("data", "Download-GDPconstant-USD-countries.xlsx"), # Excel filename
+                sheet="Download-GDPconstant-USD-countr", # Sheet name
+                skip=2) # Number of rows to skip
+
+```
+
+First we want to tidy the data so that it is easier to work with going forward. 
+
+The data is in absolute numbers and we want an easier smaller format to work with so we will divide by 1bn.
+
+Also we wanna filter for the variables we need and rename these to something more logical. 
+
+
+```{r reshape_GDP_data}
+
+#Loading the dataset
+tidy_GDP_data  <-  UN_GDP_data %>% #Original Dataset
+    
+#Converting to a long format to make it easier to work with
+  pivot_longer(cols = 4:51, #Years 1970-2017
+               names_to = "Year", #Name of new column with row titles
+               values_to = "USD") %>% #Name of column with value inputs
+  
+  #We want to convert to USDbn to make the file more readable
+ mutate(USDbn = USD/1e9) %>% #Notice that dividing by 1e9 is the same as 1bn (scientific format)
+  
+  #Next we filter for the variables we need. Here it is important to us %in% (one of the filters or more need to hold true) instead of == (all of filters need to be true) 
+ filter(IndicatorName %in% c("Household consumption expenditure (including Non-profit institutions serving households)", #Our C
+                             "General government final consumption expenditure", #our G
+                             "Gross capital formation", #Our I
+                             "Exports of goods and services", #Our Exports
+                             "Imports of goods and services", #Our Imoorts
+                             "Gross Domestic Product (GDP)")) %>% #We also wanna get total GDP which will be useful for comparison later in the process
+  
+  #Filtering out unneccessary columns for efficiency
+  select(Country, IndicatorName, Year, USDbn) %>% #Choosing Country, Category, Year, and Amount as our key variables
+  
+  #Renaming the variables to something more readable
+  mutate(IndicatorName = case_when(
+    IndicatorName == "Imports of goods and services" ~ "Imports", #Renaming Imports
+    IndicatorName == "Exports of goods and services" ~ "Exports", #Renaming Exports
+    IndicatorName == "Gross capital formation" ~ "Gross capital formation", #Investment is not renamed but an input is still needed (otherwise it will be NA)
+    IndicatorName == "General government final consumption expenditure" ~ "Government Expenditure", #Renaming Government Expenditure
+    IndicatorName == "Household consumption expenditure (including Non-profit institutions serving households)" ~ "Household consumption", #Renaming Consumption
+    IndicatorName == "Gross Domestic Product (GDP)" ~ "GDP")) #Renaming GDP
+
+#We glimse this to get an overview of the converted dataset. Below we see that it looks simple and structured
+glimpse(tidy_GDP_data)
+
+
+```
+
+With our data in tidy format let's plot some overviews. 
+
+We wanna produce a plot of Denmark, Sweden and Norway over time to see GDP development for each category.
+
+
+```{r}
+#Let us choose our dataset
+tidy_GDP_data_GDPestimate <- tidy_GDP_data %>%
+
+#Renaming as it will be more efficient to work with shorter easy to read names    
+  mutate(IndicatorName = case_when(
+    IndicatorName == "Imports" ~ "Im",
+    IndicatorName == "Exports" ~ "Ex",
+    IndicatorName == "Gross capital formation" ~ "I",
+    IndicatorName == "Government Expenditure" ~ "G",
+    IndicatorName == "Household consumption" ~ "C",
+    IndicatorName == "GDP" ~ "GDP")) %>%
+
+#To compute total GDP we can widen the table
+pivot_wider(names_from = IndicatorName, #Widen by indicator name
+            values_from = USDbn) %>%  #Values to be taken from the USDbn amount
+  
+  #Lets calculate the required variables
+  mutate(Net_Ex = Ex-Im, #Net Exports
+         GDPestimate = Net_Ex + I + G + C, #Estimated total GDP from our variables
+         GDPpercent_diff = GDPestimate/GDP) #Difference between our estimated GDP and actual GDP (stated in percent of Actual GDP)
+
+
+```
+
+We compute such a graph in the following way:
+
+```{r fig.width=15, fig.height=10}
+
+#First let us work with our dataset
+tidy_GDP_data_GDPpercent <- tidy_GDP_data_GDPestimate %>% 
+  
+  #Lets filter for the countries we need
+    filter(Country %in% c("Denmark", "Sweden", "Norway")) %>% #US, Ger, India
+  
+  #And Lets calculate the percentage each variable is of our estimated GDP which will add to 100
+  mutate(C_per = C/GDPestimate, #C in percent
+         G_per = G/GDPestimate, #G in percent
+         I_per = I/GDPestimate, #I in Percent
+         Net_Ex_per = Net_Ex/GDPestimate) %>% #Net Exports in Percent
+  
+  #Next let us select only the variables we need from our dataframe.
+  select(Country, Year, C_per, G_per, I_per, Net_Ex_per) %>%  #In this case we need the percentage estimates, year, and Country
+  
+  #To make it easier to work with the data we convert it back into long format
+  pivot_longer(cols = 3:6, #Columns to be converted
+               names_to = "IndicatorName", #Name of new Column with variable names
+               values_to = "GDPpercent") %>% #Name of new column with Values
+  
+  #Now let us rename to something more readable for the chart
+  mutate(IndicatorName = case_when( #Case when to say that when x holds true use y 
+    IndicatorName == "Net_Ex_per" ~ "Net Exports",
+    IndicatorName == "I_per" ~ "Gross capital formation",
+    IndicatorName == "G_per" ~ "Government Expenditure",
+    IndicatorName == "C_per" ~ "Household consumption"),
+    
+    #We want to reorder these factors according to the order in the above image
+    IndicatorName = factor(IndicatorName, #Ordering by indicator name
+                                levels = c(
+                                  "Government Expenditure",
+                                  "Gross capital formation",
+                                  "Household consumption",
+                                  "Net Exports")))
+
+#Now we are ready to plot the data. This initial Section is the same as the one used in the previous chart
+ggplot(tidy_GDP_data_GDPpercent, 
+       aes(x = Year, #Year on x axis
+           y = GDPpercent, #GDP on y axis
+           group = IndicatorName, #To tell R we are working with indicator variables so it can seperate the datapoints
+           color = IndicatorName)) + #To color by indicator
+  
+  #Plot type
+  geom_line() + 
+  
+  #Seperating factor for each Chart
+  facet_wrap(~Country) + 
+  
+  #Simplifying theme
+  theme_economist() + 
+  
+  #Choosing x axis breaks
+  scale_x_discrete(breaks = seq(from = 1970, to = 2010, by = 10)) + 
+  
+  #Inserting labels
+  labs(title = "GDP and its breakdown at constant 2010 prices in US Dollars", 
+       subtitle ="In constant 2010 US$",
+       y = "Proportion",
+       caption = "Source: United Nations, https://unstats.un.org/unsd/snaama/Downloads") +
+  
+  #Removing Titles
+    theme(axis.title.x = element_blank(), #This removes the x axis title
+          legend.title = element_blank(),#This removes the legend title
+          legend.position = "right") + 
+  NULL
+
+
+```
+
+We see that a couple of key things from this chart. 
+
+First and foremost, the basic structure of GDP is very similar across very different countries. Here we used Denmark, Sweden, and Nowray but it is always the case that:
+
+- Net exports has the smallest impact on GDP
+- Household Consumption is the most important factor
+- Government spending and Investment are similar in importance
+
+
+However, there are some exceptions to the above which are likely driven by the countries: 
+
+**Denmark:** In Denmark the importance of exports has been increasing and exports has the relatively highest importance of the three countries. The country is known for exporting medicine, pork and more. 
+
+**Norway:** Norway say a sudden spike in exports in early 2000's likely from their large oil reservoirs. 
+
+**Sweden:** Government expenditure has been of decreasing importance the latest years
+
+
+
+
+
+```{r fig.width=15, fig.height=10}
+#Choosing variables
+ggplot(tidy_GDP_data_GDPpercent, aes(x = IndicatorName, y = GDPpercent, fill = IndicatorName)) + 
+  
+  #IN Boxplot
+  geom_boxplot() + 
+  
+  #By Country
+  facet_wrap(~Country) +
+  
+  #Simple Theme
+  theme_economist() + 
+  
+  #Flipping Coordinates
+  coord_flip() + 
+  
+  #Adding Labels
+  labs(title = "Weight of GDP variables from 1970 to today",
+       subtitle = "in constant 2010 USD$",
+       x = "GDP Variable", 
+       y = "Weight in %") + 
+  
+  
+  #Removing Legend
+  guides(fill = F) + 
+  
+  NULL 
+```
+
+
+WE see that in overall terms the trend and relative importance of each category have looked very similar from 1970 until today. 
