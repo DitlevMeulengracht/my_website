@@ -37,7 +37,7 @@ I worked in the investment team in [Copenhagen Infrastructure Partners](https://
 - Fund level performance analysis
 - Fund level strategic analysis
 
-## Hobies
+## Hobbies
 
 In my free time i'm passionate about:
 
