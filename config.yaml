@@ -17,10 +17,12 @@ params:
         country: United Kingdom
         street: LBS Street 2021
         title: Address
+    enable: TRUE
     buttonClear: Clear
     buttonSend: Send message
-    email: 
-      - email: ditlevm.mfa2022@london.edu
+    formEmail: "ditlev.meulengracht@gmail.com"
+    email:
+      - email: ditlev.meulengracht@gmail.com
         title: Email
     enable: yes
     phone:
@@ -105,8 +107,8 @@ params:
         title: Access my resume
         url: blogs/resume
   two:
-    buttonText: About me!  
+    buttonText: Check it out! 
     enable: yes
-    subtitle: "A little more information about me!"
-    title: Additional Information
+    subtitle: "Find more information here!"
+    title: About me
     url: about/about
